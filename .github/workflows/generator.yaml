@@ -1,0 +1,59 @@
+name: Generate test data
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main, data-local]
+    types: [closed]
+
+jobs:
+#   verify-merge:
+#     runs-on: ubuntu-latest
+#
+#     steps:
+#       - name: 🛂 Ensure pull request was merged
+#         if: ${{ github.event.pull_request.merged != true }}
+#         run: exit 1
+
+  generate_data:
+    # needs: verify-merge
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🐎 Hello Git
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.BOT_KEY }}
+
+      - name: 🎯 Setup Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: "stable"
+
+      - name: 🏗️ Setup scripts
+        id: scripts
+        run: |
+          git checkout main
+          mkdir -p ~/g-tools/generator/
+          cp -r -t ~/g-tools/generator/ ./lib/ ./bin/ analysis_options.yaml pubspec.yaml
+          cd ~/g-tools/
+          echo "path=$(pwd)" >> "$GITHUB_OUTPUT"
+          cd generator/
+          dart pub get
+
+      - name: 🗃️ Generate tests
+        id: generator
+        working-directory: ${{ github.workspace }}
+        run: |
+          git checkout data-local
+          dart run "${{ steps.scripts.outputs.path }}/generator/bin/generator.dart" --directory ${{ github.workspace }} --output "${{ steps.scripts.outputs.path }}/data"
+          echo "commitID=$(git rev-parse --short=7 HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: 🏪 Add generated tests to repo
+        working-directory: ${{ github.workspace }}
+        run: |
+          git checkout generated-tests-dart 2>/dev/null || git checkout --orphan generated-tests-dart
+          rm -rf ./*
+          mv -t . "${{ steps.scripts.outputs.path }}/data/*"
+          git commit -am "Regenerated test data from ${{ steps.generator.outputs.commitID }}"
+          git push origin generated-tests-dart

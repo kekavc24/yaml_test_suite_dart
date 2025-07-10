@@ -19,8 +19,10 @@ final _argParser = ArgParser()
   );
 
 extension on ArgResults {
-  ({String testDataDir, String outDir}) get directories =>
-      (testDataDir: [_inputDir].toString(), outDir: [_outputDir].toString());
+  ({String testDataDir, String outDir}) get directories => (
+    testDataDir: this[_inputDir].toString(),
+    outDir: this[_outputDir].toString(),
+  );
 }
 
 void main(List<String> args) async {

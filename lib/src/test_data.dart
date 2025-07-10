@@ -145,8 +145,6 @@ Stream<TestDirectory> _extractCompleteTestData(
       );
     }
   }
-
-  await queue.cancel(immediate: true);
 }
 
 /// Generates an abstraction of the actual directory with its test suite data

@@ -87,21 +87,23 @@ Future<TestDirectory> _extractData(
     }
   }
 
+  final hasJsonInput = jsonInput.isNotEmpty;
+
   // Error tests never have json input
-  if (isErrorTest && jsonInput.isNotEmpty) {
+  if (isErrorTest && hasJsonInput) {
     freeThrow(
       'Error test found with json input to validate found at test with ID:'
       ' $testID',
     );
   } else if (files.length < 2 ||
-      (!isErrorTest && (jsonInput.isEmpty || !hasYamlOutput))) {
+      (!isErrorTest && (!hasJsonInput || !hasYamlOutput))) {
     freeThrow('Test "$testID" has incomplete data not suitable for testing');
   }
 
   return (
     name: testID,
     filesToMove: files,
-    comparableJson: jsonInput.toString(),
+    comparableJson: isErrorTest ? null: jsonInput.toString(),
   );
 }
 

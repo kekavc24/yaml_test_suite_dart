@@ -1,0 +1,16 @@
+name: yaml_test_suite_dart
+description: Test Suite for YAML modified and adapted for parsers written in Dart
+version: 0.0.1
+repository: https://github.com/kekavc24/yaml_test_suite_dart
+
+environment:
+  sdk: ^3.8.0
+
+# Add regular dependencies here.
+dependencies:
+  args: ^2.7.0
+  async: ^2.13.0
+  path: ^1.9.1
+
+dev_dependencies:
+  lints: ^6.0.0

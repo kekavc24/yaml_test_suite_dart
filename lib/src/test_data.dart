@@ -185,16 +185,6 @@ Stream<TestDirectory> generateTestData(String directory) async* {
   }
 }
 
-/// Deletes a [file] that is a [Directory] or [File]
-Future<void> _deleteIfPresent(
-  FileSystemEntity file, {
-  required bool recursive,
-}) async {
-  if (await file.exists()) {
-    await file.delete(recursive: recursive);
-  }
-}
-
 /// Moves test data to the desired test directory
 Future<String> copyFilesTo(
   String absoluteRootDir,
@@ -206,22 +196,25 @@ Future<String> copyFilesTo(
   final dir = Directory(dirPath);
 
   // Remove directory. May have stale data
-  _deleteIfPresent(dir, recursive: true);
-  await dir.create();
+  if (dir.existsSync()) {
+    dir.deleteSync(recursive: true);
+  }
+
+  dir.createSync(recursive: true);
 
   for (final file in filesToMove) {
-    await file.copy(
-      path.joinAll(
-        [dirPath, path.basename(file.path)],
-      ),
+    final fPath = path.joinAll(
+      [dirPath, path.basename(file.path)],
     );
+
+    File(fPath).createSync();
+    await file.copy(fPath);
   }
 
   /// Successful tests may have a cleaned json input to ensure validity of the
   /// data parsed
   if (comparableJson != null) {
     final file = File(path.joinAll([dirPath, _defaultJsonPath]));
-    _deleteIfPresent(file, recursive: false); // Impossible. Just to be safe
     await file.writeAsString(comparableJson);
   }
 

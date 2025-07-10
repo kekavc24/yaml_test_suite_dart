@@ -21,6 +21,7 @@ typedef TestDirectory = ({
 const _metaPath = '===';
 const _jsonInputPath = 'in.json';
 const _yamlInputPath = 'in.yaml';
+const _dumpedYamlPath = 'out.yaml';
 const _errPath = 'error';
 
 final _miscellaneousDir = {'meta', 'tags', 'name', '.git'};
@@ -41,6 +42,7 @@ Future<TestDirectory> _extractData(
 
   var hasMetaDesc = false; // General description of the test
   var hasYamlInput = false; // Yaml input to be parsed
+  var hasYamlOutput = false;
   var isErrorTest = false;
 
   final files = <File>[];
@@ -74,6 +76,12 @@ Future<TestDirectory> _extractData(
           files.add(file);
         });
 
+      case _dumpedYamlPath:
+        utilFunc(_dumpedYamlPath, () => hasYamlOutput, () {
+          hasYamlOutput = true;
+          files.add(file);
+        });
+
       default:
         continue;
     }
@@ -85,7 +93,8 @@ Future<TestDirectory> _extractData(
       'Error test found with json input to validate found at test with ID:'
       ' $testID',
     );
-  } else if (files.length != 2 || (!isErrorTest && jsonInput.isEmpty)) {
+  } else if (files.length < 2 ||
+      (!isErrorTest && (jsonInput.isEmpty || !hasYamlOutput))) {
     freeThrow('Test "$testID" has incomplete data not suitable for testing');
   }
 

@@ -26,9 +26,11 @@ extension on ArgResults {
 }
 
 void main(List<String> args) async {
+  print('Init generator!');
   final (:testDataDir, :outDir) = _argParser.parse(args).directories;
 
   await for (final directory in generateTestData(testDataDir)) {
     await copyFilesTo(outDir, directory);
   }
+  print('Out generator!');
 }

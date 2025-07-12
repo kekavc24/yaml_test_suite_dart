@@ -1,0 +1,23 @@
+name: Copy Test Data
+description: >-
+  Copies generated test data from yaml_test_suite_dart fork to a directory
+  where the tests can be accessed
+
+inputs:
+  path:
+    description: Directory where test data is copied
+    required: true
+
+runs:
+  using: composite
+
+  steps:
+      - name: 🐎 Hello Git
+        uses: actions/checkout@v4
+        with:
+          repository: kekavc24/yaml_test_suite_dart
+          ref: generated-tests-dart
+
+      - name: 🚂 Copy to destination
+        shell: bash
+        run: cp -r -t ${{ inputs.path }} ${{ github.workspace }}/*

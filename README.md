@@ -1,6 +1,6 @@
 # yaml_test_suite_dart
 
-This is a fork of the official [YAML Test Suite][yaml_link]. The tests are unaltered.
+This is a fork of the official [YAML Test Suite][yaml_link]. The licence and tests are unaltered.
 
 ## Structure
 
@@ -15,10 +15,7 @@ The repo has 4 branches:
 
 The test files generated in this repo are similar to those in the official test suite. The key differences include:
 
-* The `in.json` file is replaced by a `jsonToDartStr` file that contains a string that resembles strings generated when an object's `toString` method is called in `Dart`. This was done for simplicity's sake since some `in.json` files contain multiple json nodes dumped in a format that is invalid as json but somewhat valid in YAML.
-
-> [!NOTE]
-> You can still use the official YAML test suite. No special changes have been made. The `jsonToDartStr` is a subjective change as most objects in Dart (and most programming languages) implement a `toString()` method that outputs the object as a simple string. The rationale for this change is explained below.
+* The `in.json` file is replaced by a `jsonToDartStr` file that contains a string that resembles strings generated when an object's `toString` method is called in `Dart`. This was done for simplicity's sake since some `in.json` files contain multiple json nodes dumped in a format that is invalid as json but somewhat valid in YAML. For example
 
 ```json
 {"key": "value"}
@@ -46,6 +43,11 @@ The repo currently regenerates the `in.json` file as a simple string:
 [{key: value}, what? another value here?, [bruh, is this valid]]
 ```
 
+> [!NOTE]
+> You can still use the official YAML test suite. The parsed YAML document/node can be dumped in a format similar to `in.json` if you use the correct indentation. However, there are 300+ files with some of json dumps inlined.
+>
+> The `jsonToDartStr` is a subjective output change in favour of consistency. Additionally, (most) objects in Dart (and other programming languages) implement a `toString()` method and/or function that outputs the object as a simple string.
+
 * Error tests only have the `===` file (label) and an `in.yaml` file. Each parser's test must fail but the error message may be different?
 
 ## TLDR
@@ -63,6 +65,21 @@ Test folders whose YAML inputs must result in a parser failure only have:
 
 * `===`
 * `in.yaml`
+
+## Treats included
+
+If you need the data in the `generated-tests-dart` in github workflows/CI, there is a GitHub action in the repository that does for you out of the box. You only need to provide the `path`. The action uses the UNIX `cp` command.
+
+You will need to use the latest commit ID from the `main` branch of this repo.
+
+```yaml
+
+# Use it in your workflow. Don't forget to provide the path
+- uses: kekavc24/yaml_test_suite_dart/.github/actions/copy_test_data@4b4dbf15aa591bf040e9cca0dd430feef55d03c7
+  with:
+    path: # Path where you need the data copied as a string
+
+```
 
 ## I need the `jsonToDartStr` dumped differently
 

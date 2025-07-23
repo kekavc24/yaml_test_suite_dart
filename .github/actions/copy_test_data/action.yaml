@@ -20,4 +20,4 @@ runs:
 
       - name: 🚂 Copy to destination
         shell: bash
-        run: cp -r -t ${{ inputs.path }} ${{ github.workspace }}/*
+        run: mv -t ${{ inputs.path }} ${{ github.workspace }}/*

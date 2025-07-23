@@ -68,7 +68,7 @@ Test folders whose YAML inputs must result in a parser failure only have:
 
 ## Treats included
 
-If you need the data in the `generated-tests-dart` branch in github workflows/CI, there is a GitHub action in the repository that does that for you out of the box. You only need to provide the `path`. The action uses the UNIX `cp` command.
+If you need the data in the `generated-tests-dart` branch in github workflows/CI, there is a GitHub action in the repository that does that for you out of the box. You only need to provide the `path`. The action uses the UNIX `mv` command.
 
 You will need to use the latest commit ID from the `main` branch of this repo.
 

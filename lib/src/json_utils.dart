@@ -16,13 +16,6 @@ const _jsonListClose = ']';
 /// Start/end of json value for a key/value
 const _jsonQuote = '"';
 
-/// Character used to escape trailing line breaks in json generated to
-/// validate parsed YAML
-const _occludedLF = '↵';
-
-/// Character used to escape hard tabs in json generated to validate parsed YAML
-const _occludedTAB = '»';
-
 /// Utility map for matching [_jsonListClose] and [_jsonMapClose] to their
 /// counterparts
 final _jsonAntiPartner = {
@@ -33,20 +26,13 @@ final _jsonAntiPartner = {
 /// Other delimiters used in json.
 final _jsonIgnored = {':', ','};
 
-/// Decodes and saves the json present in the [buffer]. Any [_occludedLF] and
-/// [_occludedTAB] are replaced with `\n` and `\t` respectively to revert the
-/// json to a format compatible with YAML
+/// Decodes and saves the json present in the [buffer] as validation and
+/// encodes
 void _saveJson(List<String> jsonInputs, StringBuffer buffer) {
-  jsonInputs.add(
-    json
-        .decode(buffer.toString())
-        .toString()
-        .replaceAllMapped(
-          RegExp('[$_occludedLF$_occludedTAB]'),
-          (m) => m[0]! == _occludedLF ? '\n' : '\t',
-        ),
-  );
+  final buffered = buffer.toString();
 
+  json.decode(buffered); // Validation. Just for measure.
+  jsonInputs.add(buffered);
   buffer.clear();
 }
 
@@ -92,21 +78,13 @@ int _scanJsonQuoted(
     final char = jsonString[expectedIndex];
 
     switch (char) {
-      case _jsonQuote when jsonString[expectedIndex - 1] != r'\':
+      case r'\':
+        buffer
+          ..write(char)
+          ..write(jsonString[++expectedIndex]);
+
+      case _jsonQuote:
         break fixer;
-
-      case '\r':
-        {
-          ++expectedIndex;
-          continue occluder;
-        }
-
-      occluder:
-      case '\n':
-        buffer.write(_occludedLF);
-
-      case '\t':
-        buffer.write(_occludedTAB);
 
       default:
         buffer.write(char);
@@ -146,22 +124,37 @@ int _scanInlineUnquoted(
   final maxLen = jsonString.length;
   var index = currentIndex;
 
+  unquoted:
   for (index; index < maxLen; index++) {
     final char = jsonString[index];
 
-    // An unquoted YAML json value
-    if (char case _jsonMapClose || _jsonListClose || ',' || ':' || ' '
-        when !saveAsJson) {
-      break;
-    } else if (char case '\r' || '\n') {
-      break; // Inline values cannot have line break or whitespace
-    }
+    switch (char) {
+      // An unquoted YAML json value
+      case _jsonMapClose || _jsonListClose || ',' || ':' || ' '
+          when !saveAsJson:
+        break unquoted;
 
-    buffer.write(char);
+      // Inline values cannot have line break or whitespace
+      case '\r' || '\n':
+        break unquoted;
+
+      // Make quoted safe
+      case r'\' || '/' || '"':
+        buffer.write(
+          r'\'
+          '$char',
+        );
+
+      case '\t':
+        buffer.write(r'\t');
+
+      default:
+        buffer.write(char);
+    }
   }
 
   if (saveAsJson) {
-    jsonInputs.add(buffer.toString());
+    jsonInputs.add('"$buffer"');
     buffer.clear();
   }
 

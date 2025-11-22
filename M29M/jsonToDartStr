@@ -1,5 +1,1 @@
-[{a: ab
-
-cd
-ef
-}]
+[{"a":"ab\n\ncd\nef\n"}]

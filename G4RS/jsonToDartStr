@@ -1,4 +1,1 @@
-[{unicode: Sosa did fine.☺, control: 1998	1999	2000
-, hex esc: 
- is 
-, single: "Howdy!" he cried., quoted:  # Not a 'comment'., tie-fighter: |\-*-/|}]
+[{"unicode":"Sosa did fine.☺","control":"\b1998\t1999\t2000\n","hex esc":"\r\n is \r\n","single":"\"Howdy!\" he cried.","quoted":" # Not a 'comment'.","tie-fighter":"|\\-*-/|"}]

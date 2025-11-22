@@ -1,3 +1,1 @@
-[{Not indented: {By one space: By four
-  spaces
-, Flow style: [By two, Also by two, Still by two]}}]
+[{"Not indented":{"By one space":"By four\n  spaces\n","Flow style":["By two","Also by two","Still by two"]}}]

@@ -1,7 +1,1 @@
-[{a:  more indented
-regular
-, b: 
-
- more indented
-regular
-}]
+[{"a":" more indented\nregular\n","b":"\n\n more indented\nregular\n"}]

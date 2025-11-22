@@ -1,4 +1,1 @@
-[{literal: some
-text
-, folded: some text
-}]
+[{"literal":"some\ntext\n","folded":"some text\n"}]

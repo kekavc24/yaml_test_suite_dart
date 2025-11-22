@@ -1,1 +1,1 @@
-[{block sequence: [one, {two: three}]}]
+[{"block sequence":["one",{"two":"three"}]}]

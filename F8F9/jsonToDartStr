@@ -1,4 +1,1 @@
-[{strip: # text, clip: # text
-, keep: # text
-
-}]
+[{"strip":"# text","clip":"# text\n","keep":"# text\n\n"}]

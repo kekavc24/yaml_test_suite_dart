@@ -1,2 +1,1 @@
-[{foo
-bar:baz	x \$%^&*()x: 23, x\ny:z\tx $%^&*()x: 24}]
+[{"foo\nbar:baz\tx \\$%^&*()x":23,"x\\ny:z\\tx $%^&*()x":24}]

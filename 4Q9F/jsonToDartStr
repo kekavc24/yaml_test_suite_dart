@@ -1,5 +1,1 @@
-[ab cd
-ef
-
-gh
-]
+["ab cd\nef\n\ngh\n"]

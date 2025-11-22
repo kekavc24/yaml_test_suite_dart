@@ -15,7 +15,7 @@ The repo has 4 branches:
 
 The test files generated in this repo are similar to those in the official test suite. The key differences include:
 
-* The `in.json` file is replaced by a `jsonToDartStr` file that contains a string that resembles strings generated when an object's `toString` method is called in `Dart`. This was done for simplicity's sake since some `in.json` files contain multiple json nodes dumped in a format that is invalid as json but somewhat valid in YAML. For example
+* The `in.json` file is replaced by a `jsonToDartStr` file that contains an inlined json string without any whitespace. This was done for simplicity's sake since some `in.json` files contain multiple json nodes dumped in a format that is invalid as json but somewhat valid in YAML. For example
 
 ```json
 {"key": "value"}
@@ -40,13 +40,11 @@ The repo currently regenerates the `in.json` file as a simple string:
 ```shell
 # Collects all the json nodes to an array
 
-[{key: value}, what? another value here?, [bruh, is this valid]]
+[{"key":"value"}, "what? another value here?", ["bruh","is this valid?"]]
 ```
 
 > [!NOTE]
-> You can still use the official YAML test suite. The parsed YAML document/node can be dumped in a format similar to `in.json` if you use the correct indentation. However, there are 300+ files with some of json dumps inlined.
->
-> The `jsonToDartStr` is a subjective output change in favour of consistency. Additionally, (most) objects in Dart (and other programming languages) implement a `toString()` method and/or function that outputs the object as a simple string.
+> You can still use the official YAML test suite. The `jsonToDartStr` is a subjective output change in favour of consistency.
 
 * Error tests only have the `===` file (label) and an `in.yaml` file. Each parser's test must fail but the error message may be different?
 

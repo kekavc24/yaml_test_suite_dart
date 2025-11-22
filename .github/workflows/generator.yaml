@@ -60,4 +60,4 @@ jobs:
           mv -t . ~/g-tools/data/*
           git add -A
           git commit -m "Regenerated test data from ${{ steps.generator.outputs.commitID }}"
-          git push origin generated-tests-dart
+          git push origin HEAD:generated-tests-dart

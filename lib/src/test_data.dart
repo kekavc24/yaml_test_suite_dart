@@ -22,7 +22,7 @@ const _metaPath = '===';
 const _jsonInputPath = 'in.json';
 const _yamlInputPath = 'in.yaml';
 const _dumpedYamlPath = 'out.yaml';
-const _errPath = 'error';
+//const _errPath = 'error';
 
 final _miscellaneousDir = {'meta', 'tags', 'name', '.git'};
 
@@ -33,54 +33,34 @@ Future<TestDirectory> _extractData(
 ) async {
   void freeThrow(String message) => Exception(message);
 
-  void utilFunc(String path, bool Function() checker, void Function() body) {
-    if (!checker()) {
-      freeThrow('Duplicate "$path" files found');
-    }
-    return body();
-  }
-
-  var hasMetaDesc = false; // General description of the test
-  var hasYamlInput = false; // Yaml input to be parsed
   var hasYamlOutput = false;
-  var isErrorTest = false;
+  var isErrorTest = true;
 
   final files = <File>[];
   final jsonInput = <String>[]; // Json comparison if valid
 
   await for (final file in testFiles) {
     switch (path.basename(file.path)) {
-      case _errPath:
-        isErrorTest = true;
-
       case _jsonInputPath:
-        utilFunc(
-          _jsonInputPath,
-          () => jsonInput.isNotEmpty,
-          () => extractMultiDocJsonChunks(
+        {
+          isErrorTest = false;
+          extractMultiDocJsonChunks(
             testID,
             jsonInput,
             file.readAsStringSync().trim(),
-          ),
-        );
+          );
+        }
 
       case _yamlInputPath:
-        utilFunc(_yamlInputPath, () => hasYamlInput, () {
-          hasYamlInput = true;
-          files.add(file);
-        });
+        files.add(file);
 
       case _metaPath:
-        utilFunc(_metaPath, () => hasMetaDesc, () {
-          hasMetaDesc = true;
-          files.add(file);
-        });
+        files.add(file);
 
       case _dumpedYamlPath:
-        utilFunc(_dumpedYamlPath, () => hasYamlOutput, () {
-          hasYamlOutput = true;
-          files.add(file);
-        });
+        isErrorTest = false;
+        hasYamlOutput = true;
+        files.add(file);
 
       default:
         continue;
@@ -103,7 +83,7 @@ Future<TestDirectory> _extractData(
   return (
     name: testID,
     filesToMove: files,
-    comparableJson: isErrorTest ? null: jsonInput.toString(),
+    comparableJson: isErrorTest || !hasJsonInput ? null : jsonInput.toString(),
   );
 }
 

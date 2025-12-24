@@ -15,33 +15,7 @@ The repo has 4 branches:
 
 The test files generated in this repo are similar to those in the official test suite. The key differences include:
 
-* The `in.json` file is replaced by a `jsonToDartStr` file that contains an inlined json string without any whitespace. This was done for simplicity's sake since some `in.json` files contain multiple json nodes dumped in a format that is invalid as json but somewhat valid in YAML. For example
-
-```json
-{"key": "value"}
-"what? another value here?"
-["bruh", "is this valid?"]
-```
-
-The json content above can be represented in YAML as:
-
-```yaml
----
-key: value
----
-"what? another value here?"
----
-- bruh
-- is this valid
-```
-
-The repo currently regenerates the `in.json` file as a simple string:
-
-```shell
-# Collects all the json nodes to an array
-
-[{"key":"value"}, "what? another value here?", ["bruh","is this valid?"]]
-```
+* The `in.json` file is replaced by a `jsonToDartStr` file that contains an inlined json string without any whitespace for simplicity's sake.
 
 > [!NOTE]
 > You can still use the official YAML test suite. The `jsonToDartStr` is a subjective output change in favour of consistency.
@@ -56,7 +30,7 @@ Test folder whose YAML inputs must be successfully parsed include:
 
 * `===` - label
 * `in.yaml` - yaml input
-* `jsonToDartStr` - simple string representing the underlying object. If multiple docs are in play, then the string is an array of the objects as strings
+* `jsonToDartStr` - an array of documents as a json object.
 * `out.yaml` - yaml output if the node was dumped. May differ from `in.yaml`.
 
 Test folders whose YAML inputs must result in a parser failure only have:

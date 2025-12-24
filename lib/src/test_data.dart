@@ -22,7 +22,7 @@ const _metaPath = '===';
 const _jsonInputPath = 'in.json';
 const _yamlInputPath = 'in.yaml';
 const _dumpedYamlPath = 'out.yaml';
-//const _errPath = 'error';
+const _errPath = 'error';
 
 final _miscellaneousDir = {'meta', 'tags', 'name', '.git'};
 
@@ -34,7 +34,7 @@ Future<TestDirectory> _extractData(
   void freeThrow(String message) => Exception(message);
 
   var hasYamlOutput = false;
-  var isErrorTest = true;
+  var isErrorTest = false;
 
   final files = <File>[];
   final jsonInput = <String>[]; // Json comparison if valid
@@ -43,7 +43,6 @@ Future<TestDirectory> _extractData(
     switch (path.basename(file.path)) {
       case _jsonInputPath:
         {
-          isErrorTest = false;
           extractMultiDocJsonChunks(
             testID,
             jsonInput,
@@ -58,9 +57,11 @@ Future<TestDirectory> _extractData(
         files.add(file);
 
       case _dumpedYamlPath:
-        isErrorTest = false;
         hasYamlOutput = true;
         files.add(file);
+
+      case _errPath:
+        isErrorTest = true;
 
       default:
         continue;

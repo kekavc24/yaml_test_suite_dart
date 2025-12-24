@@ -11,6 +11,9 @@ typedef TestDirectory = ({
   /// subdirectory to a top level directory
   String name,
 
+  /// Whether this directory should fail.
+  bool isErrorTest,
+
   /// Immutable files that must be present even when moving the directory.
   List<File> filesToMove,
 
@@ -84,6 +87,7 @@ Future<TestDirectory> _extractData(
   return (
     name: testID,
     filesToMove: files,
+    isErrorTest: isErrorTest,
     comparableJson: isErrorTest || !hasJsonInput ? null : jsonInput.toString(),
   );
 }
@@ -171,7 +175,7 @@ Future<String> copyFilesTo(
   String absoluteRootDir,
   TestDirectory directoryToMove,
 ) async {
-  final (:name, :filesToMove, :comparableJson) = directoryToMove;
+  final (:name, :filesToMove, :isErrorTest, :comparableJson) = directoryToMove;
 
   final dirPath = path.joinAll([absoluteRootDir, name]);
   final dir = Directory(dirPath);
@@ -184,9 +188,14 @@ Future<String> copyFilesTo(
   dir.createSync(recursive: true);
 
   for (final file in filesToMove) {
-    final fPath = path.joinAll(
-      [dirPath, path.basename(file.path)],
-    );
+    final fileName = path.basename(file.path);
+
+    // Ignore tests that should pass
+    if (fileName case _jsonInputPath || _dumpedYamlPath when isErrorTest) {
+      continue;
+    }
+
+    final fPath = path.joinAll([dirPath, fileName]);
 
     File(fPath).createSync();
     await file.copy(fPath);
